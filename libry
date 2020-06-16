@@ -1,0 +1,160 @@
+create database Librari ;
+use Librari ;
+create table book (
+bo_ID int primary key , 
+bo_author varchar(255) ,
+bo_name varchar(255) ,
+bo_price int
+);
+create table librarian (
+l_ID int primary key , 
+l_Name varchar(255) ,
+l_address varchar(255) ,
+l_phone int ,
+bo_ID int foreign key references book (bo_ID)
+);
+create table transactions (
+t_ID int primary key , 
+t_memeberid int ,
+t_bookid int ,
+t_dateissue int ,
+t_duedate int,
+l_ID int foreign key references librarian (l_ID)
+);
+create table bill (
+b_ID int primary key , 
+b_date int ,
+b_memberid int ,
+b_amount int ,
+l_ID int foreign key references librarian (l_ID),
+);
+create table memberrecord (
+mr_ID int primary key , 
+mr_Date int ,
+mr_type varchar(255) ,
+mr_dateship int ,
+mr_name varchar(255),
+mr_adress varchar(255),
+mr_noofbookissue int ,
+b_ID int foreign key references bill (b_ID) );
+use Librari ;
+insert into book 
+values (1 , 'Mohamed Sadek' , 'Hebta' , 70);
+insert into librarian (l_ID ,l_Name ,l_address,l_phone )
+values (2 , 'ali' , 'alex' , 2222);
+insert into transactions (t_ID ,  t_memeberid , t_bookid , t_dateissue , t_duedate)
+values (3 , 123 , 3333 , 2014 , 2015 );
+insert into bill (b_ID , b_memberid , b_date , b_amount)
+values (4 , 3333 , 2019 , 70);
+insert into memberrecord(mr_ID , mr_Date , mr_type , mr_dateship,mr_name,mr_adress,mr_noofbookissue )
+values (5 , 20/3/2019 , 'romance' , 21/3/2019 , 'Ahmed', 'alex',3  ); 
+insert into book 
+values (6 , 'Ahmed MORAD' , 'Trab Elmas' , 50);
+insert into librarian (l_ID ,l_Name ,l_address,l_phone )
+values (7 , 'Magdy' , 'Domyat' , 7777);
+insert into transactions (t_ID ,  t_memeberid , t_bookid , t_dateissue , t_duedate)
+values (8 , 223 , 888 , 2012 , 2018 );
+insert into bill (b_ID , b_memberid , b_date , b_amount)
+values (9 , 999 , 2018 ,50);
+insert into memberrecord(mr_ID , mr_Date , mr_type , mr_dateship,mr_name,mr_adress,mr_noofbookissue )
+values (10 , 20/3/2018 , 'Drama' , 21/3/2018 , 'Mostafa', 'Cairo',4  ); 
+delete from book where bo_ID = 6 ;
+delete from librarian where l_Name = 'Magdy' ;
+delete from transactions where t_bookid = 888 ;
+delete from bill where b_amount = 50 ;
+delete from memberrecord where mr_type = 'Drama' ;
+update book
+set bo_author = 'Tawfek Elhakim'
+where bo_ID = 1 ;
+update librarian
+set l_address = 'cairo'
+where l_address = 'alex' ;
+update transactions
+set t_dateissue = 2015
+where t_dateissue = 2014 ;
+update bill
+set b_amount = 60
+where b_ID = 4 ;
+update memberrecord
+set mr_Date = 30/8/2019
+where b_ID = 5 ;
+select bo_author , l_name 
+from book
+inner join librarian on book.bo_ID = librarian.l_ID ; 
+select l_address , t_dateissue
+from librarian 
+left join transactions on librarian.l_ID = transactions.t_ID ;
+select t_bookid , b_amount
+from transactions
+right join bill on bill.b_ID = transactions.l_ID ;
+select b_Date , mr_type
+from bill
+full join memberrecord on bill.b_ID =  memberrecord.mr_ID ;
+select mr_adress , bo_name 
+from memberrecord , book
+where memberrecord.bo_ID = book.bo_ID ;
+select count(b_amount) , b_ID
+from bill 
+group by b_ID ; 
+select count(bo_ID) , l_name
+from librarian 
+group by l_Name ; 
+select t_dateissue
+from transactions
+where t_ID = (select t_ID from bill where t_ID = 2) ; 
+select mr_Name , mr_type
+from memberrecord
+where mr_adress > (select count(b_ID) from bill ) ;
+select bo_name 
+from book
+where bo_name = (select l_address from librarian where l_address = 'cairo') ; 
+select t_bookid
+from transactions ;
+select * 
+from librarian ;
+select distinct b_date 
+from bill ;
+SELECT TOP 10 * 
+FROM book ;
+SELECT TOP 10 PERCENT mr_Name 
+FROM memberrecord; 
+SELECT b_ID 
+FROM bill
+ORDER BY b_date;
+SELECT b_ID 
+FROM bill
+ORDER BY b_amount desc ;
+SELECT  l_Name
+FROM librarian
+ORDER BY l_address ASC;
+SELECT MIN(b_amount)
+FROM bill ;
+select MAX(b_amount)
+from bill ; 
+SELECT AVG(b_date)
+FROM bill ;
+SELECT SUM(b_date)
+FROM bill ;
+SELECT *
+FROM book
+WHERE bo_ID = 1 ;
+SELECT l_Name
+FROM librarian
+WHERE l_Name LIKE '%n%';
+SELECT l_Name
+FROM librarian
+WHERE l_Name IN ('nadil', 'nadr');
+SELECT l_Name AS staffName
+FROM librarian;
+SELECT b_ID
+FROM bill
+WHERE b_amount BETWEEN 50 AND 80;
+SELECT l_phone , l_address
+FROM librarian
+WHERE l_Name IN ('nadil', 'nadr') AND l_Name LIKE '%n%' ;
+SELECT l_phone , l_address
+FROM librarian
+WHERE l_Name IN ('nadil', 'nadr') or l_Name LIKE '%n%' ;
+SELECT b_id
+FROM bill
+WHERE NOT b_amount = 100; 
